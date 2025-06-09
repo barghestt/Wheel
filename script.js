@@ -13,8 +13,10 @@ const segments = [
 const colors = ["#FFCDD2", "#F8BBD0", "#E1BEE7", "#BBDEFB"];
 const segmentAngle = 2 * Math.PI / segments.length;
 
-let angle = 0;
 let spinning = false;
+let angle = 0; // основной угол
+let slowRotation = 0;
+let slowSpinInterval = null;
 
 function drawWheel() {
   for (let i = 0; i < segments.length; i++) {
@@ -37,7 +39,22 @@ function drawWheel() {
   }
 }
 
-drawWheel();
+function startSlowSpin() {
+  slowSpinInterval = setInterval(() => {
+    slowRotation += 0.002; // медленное вращение
+    ctx.clearRect(0, 0, wheel.width, wheel.height);
+    ctx.save();
+    ctx.translate(200, 200);
+    ctx.rotate(-slowRotation); // по часовой
+    ctx.translate(-200, -200);
+    drawWheel();
+    ctx.restore();
+  }, 16); // 60fps
+}
+
+function stopSlowSpin() {
+  clearInterval(slowSpinInterval);
+}
 
 function rotateWheel() {
   if (spinning) return;
@@ -45,6 +62,9 @@ function rotateWheel() {
   spinBtn.disabled = true;
   resultDiv.textContent = "";
 
+  stopSlowSpin(); // остановка медленного вращения
+
+  const baseRotation = slowRotation;
   const rotationDegrees = Math.random() * 360 + 720;
   const rotationRadians = rotationDegrees * Math.PI / 180;
   const duration = 5000;
@@ -55,12 +75,12 @@ function rotateWheel() {
     const progress = Math.min(elapsed / duration, 1);
     const eased = 1 - Math.pow(1 - progress, 3);
 
-    angle = rotationRadians * eased;
+    angle = baseRotation + rotationRadians * eased;
 
     ctx.clearRect(0, 0, wheel.width, wheel.height);
     ctx.save();
     ctx.translate(200, 200);
-    ctx.rotate(-angle); // колесо вращается по часовой
+    ctx.rotate(-angle); // по часовой
     ctx.translate(-200, -200);
     drawWheel();
     ctx.restore();
@@ -68,25 +88,26 @@ function rotateWheel() {
     if (progress < 1) {
       requestAnimationFrame(animate);
     } else {
-      // Стрелка внизу: угол = 270° = 3π/2
+      // Стрелка внизу: 270° = 3π/2
       let finalAngle = (angle + 3 * Math.PI / 2) % (2 * Math.PI);
       let index = Math.floor(finalAngle / segmentAngle);
       if (index >= segments.length) index = 0;
 
       resultDiv.innerHTML = `Вы выиграли: <strong>${segments[index]}</strong>`;
-      document.getElementById("tryAgain").addEventListener("click", () => {
-        resultDiv.textContent = "";
-      });
 
       spinning = false;
       spinBtn.disabled = false;
       document.getElementById("form").reset();
+
+      slowRotation = angle % (2 * Math.PI); // сохранить текущую позицию
+      startSlowSpin(); // вернуть медленное вращение
     }
   }
 
   requestAnimationFrame(animate);
 }
 
-spinBtn.addEventListener("click", () => {
-  rotateWheel();
-});
+spinBtn.addEventListener("click", rotateWheel);
+
+drawWheel();
+startSlowSpin();
