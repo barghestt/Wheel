@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Колесо удачи — Салон красоты</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Колесо удачи</h1>
+    <div class="wheel-container">
+      <div class="arrow"></div>
+      <canvas id="wheel" width="400" height="400"></canvas>
+    </div>
+    <button id="spin">Вращать колесо</button>
+    <form id="form" novalidate>
+      <h2>Испытайте удачу!</h2>
+      <p>Введите имя и номер телефона</p>
+      <input type="text" id="name" placeholder="Ваше имя" required />
+      <input type="tel" id="phone" placeholder="+7 (999) 999-9999" required />
+      <label>
+        <input type="checkbox" required /> Я согласен на обработку персональных данных
+      </label>
+    </form>
+    <div id="result"></div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
