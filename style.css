@@ -148,3 +148,17 @@ label {
 #result button:hover {
   background-color: #1b5e20;
 }
+
+@media (max-width: 480px) {
+  .wheel-container {
+    transform: scale(0.8);
+    transform-origin: center;
+    width: 100%;
+    height: auto;
+  }
+
+  canvas#wheel {
+    width: 100% !important;
+    height: auto !important;
+  }
+}
