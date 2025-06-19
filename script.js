@@ -95,6 +95,27 @@ function rotateWheel() {
 
       resultDiv.innerHTML = `Вы выиграли: <strong>${segments[index]}</strong>`;
 
+      const winnerData = {
+  name: document.getElementById("name").value,
+  phone: document.getElementById("phone").value,
+  prize: segments[index]
+};
+
+fetch("https://script.google.com/macros/s/AKfycbyb9xsq6ISTzzFQBrFklvLp7WEdKK2R4iiYjdNbUdIYAva4-o7C5HT4m3cKlxMuTTQF_g/exec", {
+   method: "POST",
+  body: JSON.stringify(winnerData),
+  headers: {
+    "Content-Type": "application/json"
+  }
+})
+.then(res => res.text())
+.then(data => {
+  console.log("Ответ от скрипта:", data);
+})
+.catch(err => {
+  console.error("Ошибка при отправке:", err);
+});
+
       spinning = false;
       spinBtn.disabled = false;
       document.getElementById("form").reset();
